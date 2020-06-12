@@ -184,8 +184,8 @@ public class J3D {
 
     private Group createlabel() {
         Group label = new Group();
-        for(int y = (int) higherBoundY; y > lowerBoundY; y-=(higherBoundY - lowerBoundY)/gradeY) {
-            textY = new Text(""+y);
+        for(double y = higherBoundY; y > lowerBoundY; y=(y-((higherBoundY - lowerBoundY)/gradeY))) {
+            textY = new Text(""+Math.round(y));
             textY.autosize();
             textY.setTranslateX(-textY.getLayoutBounds().getWidth() - labelPad);
             textY.setTranslateY(-y*(sizeY/(higherBoundY - lowerBoundY))+(higherBoundY)*(sizeY/(higherBoundY - lowerBoundY)));
@@ -195,8 +195,8 @@ public class J3D {
 
             label.getChildren().addAll(textY);
         }
-        for(int z = (int) higherBoundZ; z >= lowerBoundZ; z-=(higherBoundZ - lowerBoundZ)/gradeZ) {
-            textZ = new Text(""+z);
+        for(double z =  higherBoundZ; z >= lowerBoundZ; z-=(higherBoundZ - lowerBoundZ)/gradeZ) {
+            textZ = new Text(""+Math.round(z));
             textZ.autosize();
             textZ.setTranslateX(-textZ.getLayoutBounds().getWidth()-labelPad);
             textZ.setTranslateY(sizeY);
@@ -205,8 +205,8 @@ public class J3D {
             textZ.setRotate(0);
             label.getChildren().addAll(textZ);
         }
-        for(int x = (int) higherBoundX; x >= lowerBoundX; x-=(higherBoundX - lowerBoundX)/gradeX) {
-            textX = new Text(""+x);
+        for(double x =  higherBoundX; x >= lowerBoundX; x-=(higherBoundX - lowerBoundX)/gradeX) {
+            textX = new Text(""+Math.round(x));
             textX.autosize();
             textX.setTranslateX(-x*(sizeX/(higherBoundX - lowerBoundX))+(higherBoundX)*(sizeX/(higherBoundX - lowerBoundX))- textX.getLayoutBounds().getWidth()/2);
             textX.setTranslateY(sizeY);
@@ -234,7 +234,7 @@ public class J3D {
             }
         }
 
-// (sizeY/(cofY)*
+
 
         for (float x = 0; x < xArray.length - 1; x++) {
             for (float y = 0; y < zArray.length - 1; y++) {
@@ -280,7 +280,7 @@ public class J3D {
 
         PhongMaterial material = new PhongMaterial();
         material.setDiffuseMap(diffuseMap);
-        material.setSpecularColor(Color.WHITE);
+        material.setSpecularColor(Color.TRANSPARENT);
 
         MeshView meshView = new MeshView(mesh);
         meshView.setTranslateZ(+ Arrays.stream(xArray).min().getAsDouble() * sizeZ/cofZ);
@@ -288,7 +288,7 @@ public class J3D {
         meshView.setTranslateX(- Arrays.stream(xArray).min().getAsDouble() * sizeX/cofX);
         meshView.setMaterial(material);
         meshView.setCullFace(CullFace.NONE);
-        meshView.setDrawMode(DrawMode.FILL);
+        meshView.setDrawMode(DrawMode.LINE);
         meshView.setDepthTest(DepthTest.ENABLE);
         this.getCube().getChildren().add(meshView);
         this.setLabel(Arrays.stream(xArray).min().getAsDouble(), Arrays.stream(xArray).max().getAsDouble(),

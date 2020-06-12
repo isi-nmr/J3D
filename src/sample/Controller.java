@@ -25,7 +25,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        J3D j3D = new J3D(800,400,400);
+        J3D j3D = new J3D(400,400,400);
 
         main.getChildren().addAll(j3D.getScene());
         j3D.getScene().heightProperty().bind(main.heightProperty());
@@ -60,7 +60,7 @@ public class Controller implements Initializable {
 
         for (int x = 0; x < 800; x=x+1) {
             for (int y = 0; y < 400; y++) {
-                noiseArray[x][y] = (float) (10 * Math.cos(Math.PI * 0.01 * x) - 10  * Math.sin(Math.PI * 0.01 * y)) ;
+                noiseArray[x][y] = (float) (  Math.cos(Math.PI * 0.01 * x) -  Math.sin(Math.PI * 0.01 * y)) ;
             }
         }
 
