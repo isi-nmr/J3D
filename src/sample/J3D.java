@@ -13,10 +13,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.CullFace;
-import javafx.scene.shape.DrawMode;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.TriangleMesh;
+import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 
@@ -53,6 +50,7 @@ public class J3D {
     private Text textX;
     private  double MAX_SCALE = 10;
     private final double MIN_SCALE = 0.1;
+    private double[] zSeriesArray;
 
 
     public J3D(double sizeX, double sizeY, double sizeZ) {
@@ -82,14 +80,24 @@ public class J3D {
 
     }
 
-    public void setLabel(double lowerBoundX, double higherBoundX, double lowerBoundY, double higherBoundY,double lowerBoundZ, double higherBoundZ) {
+    public void setLabelSurface(double lowerBoundX, double higherBoundX, double lowerBoundY, double higherBoundY,double lowerBoundZ, double higherBoundZ) {
         this.lowerBoundX = lowerBoundX;
         this.higherBoundX = higherBoundX;
         this.lowerBoundY = lowerBoundY;
         this.higherBoundY = higherBoundY;
         this.lowerBoundZ = lowerBoundZ;
         this.higherBoundZ = higherBoundZ;
-        label = createlabel();
+        label = createlabelSurface();
+        cube.getChildren().add(label);
+    }
+
+    public void setLabelSeries(double lowerBoundX, double higherBoundX, double lowerBoundY, double higherBoundY,double[] zArray) {
+        this.lowerBoundX = lowerBoundX;
+        this.higherBoundX = higherBoundX;
+        this.lowerBoundY = lowerBoundY;
+        this.higherBoundY = higherBoundY;
+        this.zSeriesArray = zArray;
+        label = createlabelSeries();
         cube.getChildren().add(label);
     }
 
@@ -182,10 +190,10 @@ public class J3D {
         return value;
     }
 
-    private Group createlabel() {
+    private Group createlabelSeries() {
         Group label = new Group();
         for(double y = higherBoundY; y > lowerBoundY; y=(y-((higherBoundY - lowerBoundY)/gradeY))) {
-            textY = new Text(""+Math.round(y));
+            textY = new Text(String.format("%.1f",y));
             textY.autosize();
             textY.setTranslateX(-textY.getLayoutBounds().getWidth() - labelPad);
             textY.setTranslateY(-y*(sizeY/(higherBoundY - lowerBoundY))+(higherBoundY)*(sizeY/(higherBoundY - lowerBoundY)));
@@ -195,20 +203,21 @@ public class J3D {
 
             label.getChildren().addAll(textY);
         }
-        for(double z =  higherBoundZ; z >= lowerBoundZ; z-=(higherBoundZ - lowerBoundZ)/gradeZ) {
-            textZ = new Text(""+Math.round(z));
+        for(double z : zSeriesArray) {
+            textZ = new Text(String.format("%.1f",z));
             textZ.autosize();
             textZ.setTranslateX(-textZ.getLayoutBounds().getWidth()-labelPad);
             textZ.setTranslateY(sizeY);
-            textZ.setTranslateZ(-z*(sizeZ/(higherBoundZ - lowerBoundZ))+(higherBoundZ)*(sizeZ/(higherBoundZ - lowerBoundZ))-sizeZ/2);
+            textZ.setTranslateZ(-z*(sizeZ/(zSeriesArray.length))+sizeZ/2);
             textZ.setRotationAxis(Rotate.X_AXIS);
             textZ.setRotate(0);
             label.getChildren().addAll(textZ);
         }
         for(double x =  higherBoundX; x >= lowerBoundX; x-=(higherBoundX - lowerBoundX)/gradeX) {
-            textX = new Text(""+Math.round(x));
+            textX = new Text(String.format("%.1f",x));
             textX.autosize();
-            textX.setTranslateX(-x*(sizeX/(higherBoundX - lowerBoundX))+(higherBoundX)*(sizeX/(higherBoundX - lowerBoundX))- textX.getLayoutBounds().getWidth()/2);
+//            textX.setTranslateX(-x*(sizeX/(higherBoundX - lowerBoundX))+(higherBoundX)*(sizeX/(higherBoundX - lowerBoundX))- textX.getLayoutBounds().getWidth()/2);
+            textX.setTranslateX(x*(sizeX/(higherBoundX - lowerBoundX)) - textX.getLayoutBounds().getWidth()/2);
             textX.setTranslateY(sizeY);
             textX.setTranslateZ(-sizeZ/2 - labelPad);
             textX.setRotationAxis(Rotate.Y_AXIS);
@@ -219,7 +228,76 @@ public class J3D {
         return label;
     }
 
-    public void plot(double[] xArray, double[] zArray, double[][] yArray) {
+    private Group createlabelSurface() {
+        Group label = new Group();
+        for(double y = higherBoundY; y > lowerBoundY; y=(y-((higherBoundY - lowerBoundY)/gradeY))) {
+            textY = new Text(String.format("%.1f",y));
+            textY.autosize();
+            textY.setTranslateX(-textY.getLayoutBounds().getWidth() - labelPad);
+            textY.setTranslateY(-y*(sizeY/(higherBoundY - lowerBoundY))+(higherBoundY)*(sizeY/(higherBoundY - lowerBoundY)));
+            textY.setTranslateZ(sizeZ/2);
+            textY.setRotationAxis(Rotate.X_AXIS);
+            textY.setRotate(0);
+
+            label.getChildren().addAll(textY);
+        }
+        for(double z =  higherBoundZ; z >= lowerBoundZ; z-=(higherBoundZ - lowerBoundZ)/gradeZ) {
+            textZ = new Text(String.format("%.1f",z));
+            textZ.autosize();
+            textZ.setTranslateX(-textZ.getLayoutBounds().getWidth()-labelPad);
+            textZ.setTranslateY(sizeY);
+            textZ.setTranslateZ(z*(sizeZ/(higherBoundZ - lowerBoundZ))-sizeZ/2);
+            textZ.setRotationAxis(Rotate.X_AXIS);
+            textZ.setRotate(0);
+            label.getChildren().addAll(textZ);
+        }
+        for(double x =  higherBoundX; x >= lowerBoundX; x-=(higherBoundX - lowerBoundX)/gradeX) {
+            textX = new Text(String.format("%.1f",x));
+            textX.autosize();
+            textX.setTranslateX(x*(sizeX/(higherBoundX - lowerBoundX)) - textX.getLayoutBounds().getWidth()/2);
+            textX.setTranslateY(sizeY);
+            textX.setTranslateZ(-sizeZ/2 - labelPad);
+            textX.setRotationAxis(Rotate.Y_AXIS);
+            textX.setRotate(90);
+            label.getChildren().addAll(textX);
+        }
+
+        return label;
+    }
+
+    public void plotSeries(double[] xArray, double[] zArray, double[][] yArray) {
+        double minY = Arrays.stream(yArray).flatMapToDouble(Arrays::stream).min().getAsDouble();
+        double maxY = Arrays.stream(yArray).flatMapToDouble(Arrays::stream).max().getAsDouble();
+        double cofY = Math.abs(maxY - minY);
+        double cofX = Math.round(((Arrays.stream(xArray).max().getAsDouble() - Arrays.stream(xArray).min().getAsDouble())));
+        double cofZ = Math.round(((Arrays.stream(zArray).max().getAsDouble() - Arrays.stream(zArray).min().getAsDouble())));
+        double numOfSample = xArray.length;
+        double numOfVector = zArray.length;
+        List<Polyline> polylines = new ArrayList<>();;
+        Group polygrp = new Group();
+        for (int vector = 0; vector < numOfVector; vector++) {
+            Double[]  Data = new Double[(int) (2 * numOfSample)];
+            for(int i=0; i < 2*numOfSample; i=i+2) {
+                Data[i] = Double.valueOf(i/2)*sizeX/numOfSample;
+                Data[i+1] = -(0.5 * ((sizeY/cofY) * yArray[vector][i/2] - ((minY*sizeY)/cofY)));
+//                        -1 * yArray[vector][i/2]*sizeX/(2*sizeY);
+
+            }
+            Polyline polyline = new Polyline();
+//            polyline.strokeProperty().bind(colorPicker.valueProperty());
+            polyline.setTranslateY(0.75 * sizeY);
+            polyline.setTranslateZ(sizeZ/2- sizeZ/(numOfVector) -vector*sizeZ/(numOfVector));
+            polyline.getPoints().addAll(Data);
+            polyline.setStrokeWidth(0.5);
+            polylines.add(polyline);
+        }
+        polygrp.getChildren().addAll(polylines);
+        cube.getChildren().addAll(polygrp);
+        this.setLabelSeries(Arrays.stream(xArray).min().getAsDouble(), Arrays.stream(xArray).max().getAsDouble(),
+                minY - Math.abs(cofY/2) , maxY + Math.abs(cofY/2),
+                zArray);
+    }
+    public void plotSurface(double[] xArray, double[] zArray, double[][] yArray) {
         TriangleMesh mesh = new TriangleMesh();
         double minY = Arrays.stream(yArray).flatMapToDouble(Arrays::stream).min().getAsDouble();
         double maxY = Arrays.stream(yArray).flatMapToDouble(Arrays::stream).max().getAsDouble();
@@ -230,7 +308,7 @@ public class J3D {
 
         for (int x = 0; x < xArray.length; x++) {
             for (int z = 0; z < zArray.length; z++) {
-                mesh.getPoints().addAll(((float) (sizeX/cofX*xArray[x])), (float) (0.5 * ((sizeY/cofY) * yArray[x][z] - ((minY*sizeY)/cofY))), ((float) (sizeZ/cofZ*zArray[z])));
+                mesh.getPoints().addAll(((float) (sizeX/cofX*xArray[x])), (float) ( - 0.5 * ((sizeY/cofY) * yArray[z][x] + 2 * ((minY*sizeY)/cofY))), ((float) (sizeZ/cofZ*zArray[z])));
             }
         }
 
@@ -283,15 +361,15 @@ public class J3D {
         material.setSpecularColor(Color.TRANSPARENT);
 
         MeshView meshView = new MeshView(mesh);
-        meshView.setTranslateZ(+ Arrays.stream(xArray).min().getAsDouble() * sizeZ/cofZ);
-        meshView.setTranslateY( 0.25 * sizeY);
+        meshView.setTranslateZ(- sizeZ/2);
+//        meshView.setTranslateY( 0.25 * sizeY);
         meshView.setTranslateX(- Arrays.stream(xArray).min().getAsDouble() * sizeX/cofX);
         meshView.setMaterial(material);
         meshView.setCullFace(CullFace.NONE);
         meshView.setDrawMode(DrawMode.LINE);
         meshView.setDepthTest(DepthTest.ENABLE);
         this.getCube().getChildren().add(meshView);
-        this.setLabel(Arrays.stream(xArray).min().getAsDouble(), Arrays.stream(xArray).max().getAsDouble(),
+        this.setLabelSurface(Arrays.stream(xArray).min().getAsDouble(), Arrays.stream(xArray).max().getAsDouble(),
                 minY - Math.abs(cofY/2) , maxY + Math.abs(cofY/2),
                 Arrays.stream(zArray).min().getAsDouble(), Arrays.stream(zArray).max().getAsDouble());
 
@@ -319,7 +397,7 @@ public class J3D {
 
     }
     private Color getColorForValue(double value) {
-        double hueValue = 255 * (value);
+        double hueValue = 255 * (1 - value);
         return Color.hsb(hueValue, 1, 1);
     }
     public static double normalizeValue(double value, double min, double max, double newMin, double newMax) {
@@ -608,4 +686,5 @@ public class J3D {
     public double getMIN_SCALE() {
         return MIN_SCALE;
     }
+
 }

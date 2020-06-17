@@ -25,7 +25,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        J3D j3D = new J3D(400,400,400);
+        J3D j3D = new J3D(400,700,400);
 
         main.getChildren().addAll(j3D.getScene());
         j3D.getScene().heightProperty().bind(main.heightProperty());
@@ -33,16 +33,17 @@ public class Controller implements Initializable {
         main.onKeyPressedProperty().bind(j3D.getScene().onKeyPressedProperty());
         j3D.getCube().requestFocus();
         double[][] noise = createNoise();
-        double[] xArray = new double[800];
-        double[] yArray = new double[400];
-        for (int x = 0; x < 800; x=x+1) {
-            xArray[x] = x-100;
+        double[] xArray = new double[80];
+        double[] yArray = new double[80];
+        for (int x = 0; x < 80; x=x+1) {
+            xArray[x] = x;
         }
-        for (int y = 0; y < 400; y=y+1) {
-            yArray[y] = y-100;
+        for (int y = 0; y < 80; y=y+1) {
+            yArray[y] = y;
         }
 
-        j3D.plot(xArray,yArray, noise);
+        j3D.plotSurface(xArray,yArray, noise);
+//        j3D.plotSeries(xArray,yArray, noise);
 
 
 
@@ -56,11 +57,11 @@ public class Controller implements Initializable {
 
 
     private double[][] createNoise() {
-        double[][] noiseArray = new double[800][400];
+        double[][] noiseArray = new double[80][80];
 
-        for (int x = 0; x < 800; x=x+1) {
-            for (int y = 0; y < 400; y++) {
-                noiseArray[x][y] = (float) (  Math.cos(Math.PI * 0.01 * x) -  Math.sin(Math.PI * 0.01 * y)) ;
+        for (int x = 0; x < 80; x=x+1) {
+            for (int y = 0; y < 80; y++) {
+                noiseArray[y][x] = (float) ( 150* (Math.sin(Math.PI * 0.1 * y) + Math.sin(Math.PI * 0.1 * x))) ;
             }
         }
 
