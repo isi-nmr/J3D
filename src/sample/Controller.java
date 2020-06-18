@@ -25,7 +25,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        J3D j3D = new J3D(400,700,400);
+        J3D j3D = new J3D(400,400,400);
 
         main.getChildren().addAll(j3D.getScene());
         j3D.getScene().heightProperty().bind(main.heightProperty());
@@ -43,6 +43,11 @@ public class Controller implements Initializable {
         }
 
         j3D.plotSurface(xArray,yArray, noise);
+//        j3D.createAxisLabel();
+        j3D.getAxis_label_x().setText("Time");
+        j3D.getAxis_label_y().setText("Time");
+        j3D.getAxis_label_z().setText("Time");
+
 //        j3D.plotSeries(xArray,yArray, noise);
 
 

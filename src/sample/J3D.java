@@ -14,6 +14,8 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 
@@ -51,6 +53,13 @@ public class J3D {
     private  double MAX_SCALE = 10;
     private final double MIN_SCALE = 0.1;
     private double[] zSeriesArray;
+    private List<Text> axis_label = new ArrayList<>();
+    private Text axis_label_x;
+    private Text axis_label_y;
+    private Text axis_label_z;
+    private Text title;
+    private double axis_label_fontSize = 20;
+    private double title_fontSize = 100;
 
 
     public J3D(double sizeX, double sizeY, double sizeZ) {
@@ -76,8 +85,45 @@ public class J3D {
         cube.translateXProperty().bind(scene.widthProperty().divide(2.5));
         cube.translateYProperty().bind(scene.heightProperty().divide(2.5));
 
+        createAxisLabel();
+
         mouseTool();
 
+    }
+
+    private void setTitle() {
+        Font font = Font.font("Verdana", FontWeight.EXTRA_BOLD, title_fontSize);
+        title = new Text("Title");
+        root.getChildren().add(title);
+    }
+    private void createAxisLabel() {
+        Font font = Font.font("Verdana", FontWeight.EXTRA_BOLD, axis_label_fontSize);
+
+        axis_label_x = new Text("X");
+        axis_label_x.setTranslateY(sizeY);
+        axis_label_x.setTranslateX(- 150);
+        axis_label_x.setFont(font);
+        axis_label_x.setRotationAxis(Rotate.Y_AXIS);
+        axis_label_x.setRotate(90);
+
+        axis_label_z = new Text("Z");
+        axis_label_z.setTranslateY(sizeY);
+        axis_label_z.setTranslateX(sizeX/2);
+        axis_label_z.setTranslateZ(-sizeZ/2 - 100);
+        axis_label_z.setFont(font);
+
+        axis_label_y = new Text("Y");
+        axis_label_y.setTranslateY(sizeY/2);
+        axis_label_y.setTranslateX(-150);
+        axis_label_y.setTranslateZ(sizeZ/2 );
+        axis_label_y.setFont(font);
+        axis_label_y.setRotationAxis(Rotate.Z_AXIS);
+        axis_label_y.setRotate(-90);
+
+        axis_label.add(axis_label_z);
+        axis_label.add(axis_label_x);
+        axis_label.add(axis_label_y);
+        cube.getChildren().addAll(axis_label);
     }
 
     public void setLabelSurface(double lowerBoundX, double higherBoundX, double lowerBoundY, double higherBoundY,double lowerBoundZ, double higherBoundZ) {
@@ -687,4 +733,59 @@ public class J3D {
         return MIN_SCALE;
     }
 
+    public double[] getzSeriesArray() {
+        return zSeriesArray;
+    }
+
+    public void setzSeriesArray(double[] zSeriesArray) {
+        this.zSeriesArray = zSeriesArray;
+    }
+
+    public List<Text> getAxis_label() {
+        return axis_label;
+    }
+
+    public void setAxis_label(List<Text> axis_label) {
+        this.axis_label = axis_label;
+    }
+
+    public Text getAxis_label_x() {
+        return axis_label_x;
+    }
+
+    public void setAxis_label_x(Text axis_label_x) {
+        this.axis_label_x = axis_label_x;
+    }
+
+    public Text getAxis_label_y() {
+        return axis_label_y;
+    }
+
+    public void setAxis_label_y(Text axis_label_y) {
+        this.axis_label_y = axis_label_y;
+    }
+
+    public Text getAxis_label_z() {
+        return axis_label_z;
+    }
+
+    public void setAxis_label_z(Text axis_label_z) {
+        this.axis_label_z = axis_label_z;
+    }
+
+    public Text getTitle() {
+        return title;
+    }
+
+    public void setTitle(Text title) {
+        this.title = title;
+    }
+
+    public double getAxis_label_fontSize() {
+        return axis_label_fontSize;
+    }
+
+    public void setAxis_label_fontSize(double axis_label_fontSize) {
+        this.axis_label_fontSize = axis_label_fontSize;
+    }
 }
