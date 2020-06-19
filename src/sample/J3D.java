@@ -7,6 +7,8 @@ import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -60,7 +62,7 @@ public class J3D {
     private Text title;
     private double axis_label_fontSize = 20;
     private double title_fontSize = 100;
-
+    private ContextMenu rightClickMenu = new ContextMenu();
 
     public J3D(double sizeX, double sizeY, double sizeZ) {
         this.sizeX = sizeX;
@@ -88,6 +90,7 @@ public class J3D {
         createAxisLabel();
 
         mouseTool();
+
 
     }
 
@@ -164,6 +167,13 @@ public class J3D {
     }
 
     public void mouseTool() {
+        MenuItem initialView = new MenuItem("Initial View");
+        initialView.setOnAction(event -> {rotateX.setAngle(20); rotateY.setAngle(-45);} );
+        rightClickMenu.getItems().add(initialView);
+
+        root.setOnContextMenuRequested(event -> rightClickMenu.show(scene, event.getScreenX(), event.getScreenY()));
+
+
         scene.setOnKeyPressed(me -> {
             switch (me.getCode()) {
                 case UP:
@@ -249,15 +259,17 @@ public class J3D {
 
             label.getChildren().addAll(textY);
         }
+        int zindx = 0;
         for(double z : zSeriesArray) {
             textZ = new Text(String.format("%.1f",z));
             textZ.autosize();
             textZ.setTranslateX(-textZ.getLayoutBounds().getWidth()-labelPad);
             textZ.setTranslateY(sizeY);
-            textZ.setTranslateZ(-z*(sizeZ/(zSeriesArray.length))+sizeZ/2);
+            textZ.setTranslateZ(+zindx*(sizeZ/(zSeriesArray.length))-sizeZ/2);
             textZ.setRotationAxis(Rotate.X_AXIS);
             textZ.setRotate(0);
             label.getChildren().addAll(textZ);
+            zindx++;
         }
         for(double x =  higherBoundX; x >= lowerBoundX; x-=(higherBoundX - lowerBoundX)/gradeX) {
             textX = new Text(String.format("%.1f",x));
@@ -332,7 +344,7 @@ public class J3D {
             Polyline polyline = new Polyline();
 //            polyline.strokeProperty().bind(colorPicker.valueProperty());
             polyline.setTranslateY(0.75 * sizeY);
-            polyline.setTranslateZ(sizeZ/2- sizeZ/(numOfVector) -vector*sizeZ/(numOfVector));
+            polyline.setTranslateZ(-sizeZ/2 +vector*sizeZ/(numOfVector));
             polyline.getPoints().addAll(Data);
             polyline.setStrokeWidth(0.5);
             polylines.add(polyline);
@@ -412,7 +424,7 @@ public class J3D {
         meshView.setTranslateX(- Arrays.stream(xArray).min().getAsDouble() * sizeX/cofX);
         meshView.setMaterial(material);
         meshView.setCullFace(CullFace.NONE);
-        meshView.setDrawMode(DrawMode.LINE);
+        meshView.setDrawMode(DrawMode.FILL);
         meshView.setDepthTest(DepthTest.ENABLE);
         this.getCube().getChildren().add(meshView);
         this.setLabelSurface(Arrays.stream(xArray).min().getAsDouble(), Arrays.stream(xArray).max().getAsDouble(),
@@ -428,13 +440,13 @@ public class J3D {
         double min = Arrays.stream(noise).flatMapToDouble(Arrays::stream).min().getAsDouble();
         WritableImage wr = new WritableImage(width, height);
         PixelWriter pw = wr.getPixelWriter();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        for (int x = 0; x < height; x++) {
+            for (int z = 0; z < width; z++) {
 
 
-                double value = (noise[x][y]-min)/(max-min);
+                double value = (noise[x][z]-min)/(max-min);
                 Color color = getColorForValue(value);
-                pw.setColor(x, y, color);
+                pw.setColor(z, x, color);
 
             }
         }
