@@ -42,7 +42,7 @@ public class Controller implements Initializable {
             yArray[y] = y;
         }
 
-        j3D.plotSeries(xArray,yArray, noise);
+        j3D.plotSurface(xArray,yArray, noise);
 //        j3D.createAxisLabel();
         j3D.getAxis_label_x().setText("Time");
         j3D.getAxis_label_y().setText("Time");

@@ -1,7 +1,6 @@
 package sample;
 
-import com.google.common.primitives.Doubles;
-import com.google.common.primitives.Floats;
+
 import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
@@ -12,6 +11,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -173,6 +173,12 @@ public class J3D {
 
         root.setOnContextMenuRequested(event -> rightClickMenu.show(scene, event.getScreenX(), event.getScreenY()));
 
+        scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                root.requestFocus();
+            }
+        });
 
         scene.setOnKeyPressed(me -> {
             switch (me.getCode()) {
@@ -366,7 +372,7 @@ public class J3D {
 
         for (int x = 0; x < xArray.length; x++) {
             for (int z = 0; z < zArray.length; z++) {
-                mesh.getPoints().addAll(((float) (sizeX/cofX*xArray[x])), (float) ( - 0.5 * ((sizeY/cofY) * yArray[z][x] + 2 * ((minY*sizeY)/cofY))), ((float) (sizeZ/cofZ*zArray[z])));
+                mesh.getPoints().addAll(((float) (sizeX/cofX*xArray[x])), (float) -(0.5 * ((sizeY/cofY) * yArray[z][x] - ((minY*sizeY)/cofY))), ((float) (sizeZ/cofZ*zArray[z])));
             }
         }
 
@@ -420,7 +426,7 @@ public class J3D {
 
         MeshView meshView = new MeshView(mesh);
         meshView.setTranslateZ(- sizeZ/2);
-//        meshView.setTranslateY( 0.25 * sizeY);
+        meshView.setTranslateY( 0.75 * sizeY  );
         meshView.setTranslateX(- Arrays.stream(xArray).min().getAsDouble() * sizeX/cofX);
         meshView.setMaterial(material);
         meshView.setCullFace(CullFace.NONE);
@@ -442,12 +448,9 @@ public class J3D {
         PixelWriter pw = wr.getPixelWriter();
         for (int x = 0; x < height; x++) {
             for (int z = 0; z < width; z++) {
-
-
                 double value = (noise[x][z]-min)/(max-min);
                 Color color = getColorForValue(value);
                 pw.setColor(z, x, color);
-
             }
         }
 
