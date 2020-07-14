@@ -2,6 +2,7 @@ package sample;
 
 
 import javafx.event.EventHandler;
+import javafx.geometry.Point3D;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
@@ -63,6 +64,7 @@ public class J3D {
     private double axis_label_fontSize = 20;
     private double title_fontSize = 100;
     private ContextMenu rightClickMenu = new ContextMenu();
+    private DrawMode drawMode = DrawMode.LINE;
 
     public J3D(double sizeX, double sizeY, double sizeZ) {
         this.sizeX = sizeX;
@@ -408,7 +410,7 @@ public class J3D {
 
                 int offset = (x * (zArray.length - 1) + z ) * 8 / 2; // div 2 because we have u AND v in the list
 
-                // working
+
                 mesh.getFaces().addAll(bl, offset + 1, tl, offset + 0, tr, offset + 2);
                 mesh.getFaces().addAll(tr, offset + 2, br, offset + 3, bl, offset + 1);
 
@@ -422,6 +424,7 @@ public class J3D {
 
         PhongMaterial material = new PhongMaterial();
         material.setDiffuseMap(diffuseMap);
+
         material.setSpecularColor(Color.TRANSPARENT);
 
         MeshView meshView = new MeshView(mesh);
@@ -430,7 +433,8 @@ public class J3D {
         meshView.setTranslateX(- Arrays.stream(xArray).min().getAsDouble() * sizeX/cofX);
         meshView.setMaterial(material);
         meshView.setCullFace(CullFace.NONE);
-        meshView.setDrawMode(DrawMode.FILL);
+        meshView.setDrawMode(drawMode);
+
         meshView.setDepthTest(DepthTest.ENABLE);
         this.getCube().getChildren().add(meshView);
         this.setLabelSurface(Arrays.stream(xArray).min().getAsDouble(), Arrays.stream(xArray).max().getAsDouble(),
@@ -802,5 +806,9 @@ public class J3D {
 
     public void setAxis_label_fontSize(double axis_label_fontSize) {
         this.axis_label_fontSize = axis_label_fontSize;
+    }
+
+    public void setDrawMode(DrawMode drawMode) {
+        this.drawMode = drawMode;
     }
 }

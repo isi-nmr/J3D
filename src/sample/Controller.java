@@ -26,7 +26,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         J3D j3D = new J3D(200,200,200);
-
+        j3D.setDrawMode(DrawMode.FILL);
         main.getChildren().addAll(j3D.getScene());
         j3D.getScene().heightProperty().bind(main.heightProperty());
         j3D.getScene().widthProperty().bind(main.widthProperty());
